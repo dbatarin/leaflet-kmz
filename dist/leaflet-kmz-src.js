@@ -34,7 +34,10 @@
       ballon: true,
       bindPopup: true,
       bindTooltip: true,
+      bindLabel: true,
+      labelClassname: null,
       debug: 0,
+      mapInstance: null,
     },
 
     initialize: function(opts) {
@@ -161,11 +164,23 @@
           break;
       }
       this._setLayerBalloon(feature, layer);
+      this._setFeatureLabel(feature, layer);
     },
 
     _onKMZLoaded: function(layer, name) {
       if (this.options.debug) console.log(layer, name);
       if (this.callback) this.callback(layer, name);
+    },
+
+    _setFeatureLabel: function(feature, layer) {
+      if(this.options.bindLabel) {
+        var name = feature.properties.name ? feature.properties.name : "";
+
+        layer.setIcon && layer.setIcon(L.divIcon({ 
+          className: this.options.labelClassname ? this.options.labelClassname : "feature-label",
+          html: name,
+        }));
+      }
     },
 
     _setLayerPointIcon: function(feature, layer) {
@@ -214,12 +229,15 @@
         if (this.options.bindPopup) {
           layer.bindPopup('<div>' + '<b>' + name + '</b>' + '<br>' + desc + '</div>');
         }
-        if (this.options.bindTooltip) {
-          layer.bindTooltip('<b>' + name + '</b>', {
-            direction: 'auto',
-            sticky: true,
-          });
-        }
+        // if (this.options.bindTooltip) {
+        //   layer.bindTooltip('<b>' + name + '</b>', {
+        //     direction: 'left',
+        //     sticky: true,
+        //     permanent: true, 
+        //     className: "tooltip-label", 
+        //     offset: [0, 0]
+        //   });
+        // }
       }
     },
 
