@@ -63,7 +63,8 @@ L.KMZLoader = L.Class.extend({
   },
 
   _decodeKMLString: function(data) {
-    return data instanceof ArrayBuffer ? String.fromCharCode.apply(null, new Uint8Array(data)) : data;
+    var encoder = new TextEncoder();
+    return data instanceof ArrayBuffer ? new TextDecoder().decode(data) : data;
   },
 
   _decodeKMZFolder: function(data) {
@@ -332,6 +333,7 @@ L.KMZLoader = L.Class.extend({
             } catch (e) {
               err = new Error(e);
             }
+            
             callback(err, file);
           } else {
             callback(new Error("Ajax error for " + path + " : " + this.status + " " + this.statusText), null);
